@@ -192,7 +192,7 @@ func ResetPasswordPOST(ctx *middlewares.AutheliaCtx) {
 	}
 
 	data := templates.EmailEventValues{
-		Title:       "Password changed successfully",
+		Title:       "Passwort geändert",
 		DisplayName: userInfo.DisplayName,
 		RemoteIP:    ctx.RemoteIP().String(),
 		Details: map[string]any{
@@ -208,7 +208,7 @@ func ResetPasswordPOST(ctx *middlewares.AutheliaCtx) {
 	ctx.Logger.Debugf("Sending an email to user %s (%s) to inform that the password has changed.",
 		username, addresses[0].String())
 
-	if err = ctx.Providers.Notifier.Send(ctx, addresses[0], "Password changed successfully", ctx.Providers.Templates.GetEventEmailTemplate(), data); err != nil {
+	if err = ctx.Providers.Notifier.Send(ctx, addresses[0], data.Title, ctx.Providers.Templates.GetEventEmailTemplate(), data); err != nil {
 		ctx.Logger.Error(err)
 		ctx.ReplyOK()
 
@@ -244,9 +244,9 @@ func identityRetrieverFromStorage(ctx *middlewares.AutheliaCtx) (*session.Identi
 // ResetPasswordIdentityStart is the handler for initiating the identity validation for resetting a password.
 // We need to ensure the attacker cannot perform user enumeration by always replying with 200 whatever what happens in backend.
 var ResetPasswordIdentityStart = middlewares.IdentityVerificationStart(middlewares.IdentityVerificationStartArgs{
-	MailTitle:               "Reset your password",
-	MailButtonContent:       "Reset",
-	MailButtonRevokeContent: "Revoke",
+	MailTitle:               "Passwort zurücksetzen",
+	MailButtonContent:       "Zurücksetzen",
+	MailButtonRevokeContent: "Abbrechen",
 	TargetEndpoint:          "/reset-password/step2",
 	RevokeEndpoint:          "/revoke/reset-password",
 	ActionClaim:             ActionResetPassword,
